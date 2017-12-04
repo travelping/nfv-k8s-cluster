@@ -35,14 +35,6 @@ resource "openstack_compute_instance_v2" "test" {
 
  provisioner "remote-exec" {
       inline = [
-        "export PATH=$PATH:/usr/bin",
-        # install python for ansible support
-#        "sudo apt-get update",
-#        "sudo apt-get -y install python2.7",
-#        "sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
-#
-
-
 			# network setup
 		, <<EOF
 (
@@ -61,8 +53,19 @@ printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.n
 printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.2.mac}", NAME="data0"\n'
 ) | sudo tee /etc/udev/rules.d/71-persistent-net-ifaces.rules
 EOF
+        , "sudo reboot"
       ]
   }
+
+ provisioner "remote-exec" {
+      inline = [
+        "export PATH=$PATH:/usr/bin",
+        # install python for ansible support
+        "sudo apt-get -y update",
+        "sudo apt-get -y install python2.7",
+        "sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
+      ]
+}
 }
 
 resource "openstack_networking_network_v2" "cluster-network" {
