@@ -1,0 +1,33 @@
+// OpenStack authentication API
+os_auth_url = "https://openstack.example.com:7000/v3"
+
+// SSH public key
+pub_key = "~/.ssh/id_rsa_nopw.pub"
+
+// SSH private key
+pvt_key = "~/.ssh/id_rsa_nopw"
+
+// SSH public key fingerprint
+ssh_fingerprint = "b1:95:e1:28:c4:f2:bf:c3:18:e2:a6:b9:b2:d2:a9:02"
+
+// OpenStack project ID
+os_project_id = "83ba746575f848b285445900498bac0e"
+
+// OpenStack project name
+os_project_name = "my-project"
+
+// OpenStack user domain name
+os_user_domain_name = "Default"
+
+// OpenStack username
+os_username = "username"
+
+// OpenStack password
+os_password = "secretpassword"
+
+// OpenStack region
+os_region = "RegionOne"
+
+
+// Name prefix
+name_prefix = "my-nfv-"

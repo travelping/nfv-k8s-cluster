@@ -1,0 +1,20 @@
+// DigitalOcean API Access Token
+do_token = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+
+// SSH public key
+pub_key = "~/.ssh/id_rsa.pub"
+
+// SSH private key (must be unencrypted)
+pvt_key = "~/.ssh/id_rsa"
+
+// SSH public key fingerprint
+ssh_fingerprint = "b1:95:e1:28:c4:f2:bf:c3:18:e2:a6:b9:b2:d2:a9:02"
+
+// DigitalOcean OS image
+do_image = "ubuntu-16-04-x64"
+
+// DigitalOcean Region
+do_region = "fra1"
+
+// Name prefix
+name_prefix = "my-nfv-"
