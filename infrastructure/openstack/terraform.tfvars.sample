@@ -30,4 +30,4 @@ os_region = "RegionOne"
 
 
 // Name prefix
-name_prefix = "my-nfv-"
+name_prefix = "my-nfv"
