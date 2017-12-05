@@ -8,7 +8,7 @@ variable "mastercount" {
   default = 1
 }
 resource "openstack_compute_instance_v2" "master" {
-  count           = "${var.workercount}"
+  count           = "${var.mastercount}"
   name            = "${format("%s-master-%02d", var.name_prefix, count.index+1)}"
   image_name      = "ubuntu-16.04-image"
   flavor_name     = "x1.small"
