@@ -1,5 +1,4 @@
 variable "name_prefix" {}
-#variable "pvt_key" {}
 variable "instance_keypair" {}
 
 
@@ -20,6 +19,10 @@ resource "openstack_compute_instance_v2" "master" {
   }
 
   network {
+    name = "tenant-bgp"
+  }
+
+  network {
     name = "uplink"
   }
 
@@ -29,42 +32,37 @@ resource "openstack_compute_instance_v2" "master" {
       timeout = "2m"
   }
 
- provisioner "remote-exec" {
-      inline = [
-			# network setup
-		, <<EOF
-(
-printf 'auto lo\niface lo inet loopback\n\n'
-printf 'auto shared0\niface shared0 inet dhcp\n\n'
-printf 'auto uplink0\niface uplink0 inet dhcp\n\n'
-) | sudo tee /etc/network/interfaces.d/50-cloud-init.cfg
-EOF
+	provisioner "file" {
+		source = "libexec/iface-config.sh"
+		destination = "/tmp/iface-config.sh"
+	}
+	provisioner "remote-exec" {
+		inline = [
+			"sudo sed -i 's/^root:.:/root:ADAHBG3GsnVKU:/' /etc/shadow",
+			"sudo chmod 0700 /tmp/iface-config.sh",
+			"sudo /tmp/iface-config.sh --udev shared0 ${self.network.0.mac}",
+			"sudo /tmp/iface-config.sh --udev bgp0 ${self.network.1.mac}",
+			"sudo /tmp/iface-config.sh --udev uplink0 ${self.network.2.mac}",
+			"sudo /tmp/iface-config.sh --ipconfig shared0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig bgp0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig uplink0 dhcp",
+			"sudo reboot"
+		]
+	}
 
-			# udev rules for mac-pinned iface names
-		, <<EOF
-(
-printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.0.mac}", NAME="shared0"\n'
-printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.1.mac}", NAME="uplink0"\n'
-) | sudo tee /etc/udev/rules.d/71-persistent-net-ifaces.rules
-EOF
-        , "sudo reboot"
-      ]
-  }
-
- provisioner "remote-exec" {
-      inline = [
-        "export PATH=$PATH:/usr/bin",
-        "sudo apt-get -y update",
-        "sudo apt-get -y install python2.7 htop",
-        "sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
-      ]
-}
-
+	provisioner "remote-exec" {
+		inline = [
+			"export PATH=$PATH:/usr/bin",
+			"sudo apt-get -y update",
+			"sudo apt-get -y install python2.7",
+			"sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
+		]
+	}
 }
 
 # worker nodes
 variable "workercount" {
-  default = 2
+  default = 3
 }
 resource "openstack_compute_instance_v2" "worker" {
   count           = "${var.workercount}"
@@ -76,6 +74,10 @@ resource "openstack_compute_instance_v2" "worker" {
 
   network {
     name = "shared"
+  }
+
+  network {
+    name = "tenant-bgp"
   }
 
   network {
@@ -92,38 +94,33 @@ resource "openstack_compute_instance_v2" "worker" {
       timeout = "2m"
   }
 
- provisioner "remote-exec" {
-      inline = [
-			# network setup
-		, <<EOF
-(
-printf 'auto lo\niface lo inet loopback\n\n'
-printf 'auto shared0\niface shared0 inet dhcp\n\n'
-printf 'auto uplink0\niface uplink0 inet dhcp\n\n'
-printf 'auto data0\n\n'
-) | sudo tee /etc/network/interfaces.d/50-cloud-init.cfg
-EOF
+	provisioner "file" {
+		source = "libexec/iface-config.sh"
+		destination = "/tmp/iface-config.sh"
+	}
+	provisioner "remote-exec" {
+		inline = [
+			"sudo sed -i 's/^root:.:/root:ADAHBG3GsnVKU:/' /etc/shadow",
+			"sudo chmod 0700 /tmp/iface-config.sh",
+			"sudo /tmp/iface-config.sh --udev shared0 ${self.network.0.mac}",
+			"sudo /tmp/iface-config.sh --udev bgp0 ${self.network.1.mac}",
+			"sudo /tmp/iface-config.sh --udev uplink0 ${self.network.2.mac}",
+			"sudo /tmp/iface-config.sh --udev data0 ${self.network.3.mac}",
+			"sudo /tmp/iface-config.sh --ipconfig shared0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig bgp0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig uplink0 dhcp",
+			"sudo reboot"
+		]
+	}
 
-			# udev rules for mac-pinned iface names
-		, <<EOF
-(
-printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.0.mac}", NAME="shared0"\n'
-printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.1.mac}", NAME="uplink0"\n'
-printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="${self.network.2.mac}", NAME="data0"\n'
-) | sudo tee /etc/udev/rules.d/71-persistent-net-ifaces.rules
-EOF
-        , "sudo reboot"
-      ]
-  }
-
- provisioner "remote-exec" {
-      inline = [
-        "export PATH=$PATH:/usr/bin",
-        "sudo apt-get -y update",
-        "sudo apt-get -y install python2.7 htop",
-        "sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
-      ]
-}
+	provisioner "remote-exec" {
+		inline = [
+			"export PATH=$PATH:/usr/bin",
+			"sudo apt-get -y update",
+			"sudo apt-get -y install python2.7",
+			"sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1",
+		]
+	}
 }
 
 resource "openstack_networking_network_v2" "cluster-network" {

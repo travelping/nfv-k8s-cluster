@@ -1,33 +1,15 @@
-// OpenStack authentication API
-os_auth_url = "https://openstack.example.com:7000/v3"
+// OpenStack authentication and project settings
+// are provided by environment (please source your 
+// OpenStack RC File v3)
 
-// SSH public key
-pub_key = "~/.ssh/id_rsa_nopw.pub"
+// SSH settings for remote-exec access are expected to
+// be available via your environment (e.g. by using
+// ssh-agent and respective $SSH_AUTH_SOCK)
 
-// SSH private key
-pvt_key = "~/.ssh/id_rsa_nopw"
-
-// SSH public key fingerprint
-ssh_fingerprint = "b1:95:e1:28:c4:f2:bf:c3:18:e2:a6:b9:b2:d2:a9:02"
-
-// OpenStack project ID
-os_project_id = "83ba746575f848b285445900498bac0e"
-
-// OpenStack project name
-os_project_name = "my-project"
-
-// OpenStack user domain name
-os_user_domain_name = "Default"
-
-// OpenStack username
-os_username = "username"
-
-// OpenStack password
-os_password = "secretpassword"
-
-// OpenStack region
-os_region = "RegionOne"
-
-
-// Name prefix
+// Name prefix for created entities
 name_prefix = "my-nfv"
+
+// Id of the keypair which is available in your OpenStack.
+// The public-key will be put into the instance's
+// authorized_keys file
+instance_keypair = "my_pubkey_01"
