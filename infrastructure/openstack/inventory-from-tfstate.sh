@@ -25,7 +25,7 @@ worker_count=$( jq -r '.modules[].resources| to_entries |
 	map(select(.key|match("^openstack_compute_instance_v2.worker")))|length' "$tfstate")
 
 master_count=$( jq -r '.modules[].resources| to_entries | 
-	map(select(.key|match("^openstack_compute_instance_v2.worker")))|length' "$tfstate")
+	map(select(.key|match("^openstack_compute_instance_v2.master")))|length' "$tfstate")
 
 jq --argjson idx 0 -r '.modules[].resources| to_entries | 
 	map(select(.key|match("^openstack_compute_instance_v2.worker")))|
@@ -36,7 +36,7 @@ jq --argjson idx 0 -r '.modules[].resources| to_entries |
 		ip: (.[$i].value.primary.attributes.access_ip_v4),
 	} |
 	"# resource: "+.resource,
-	"worker_node_"+(.idx|tostring)+" ansible_ssh_host="+.ip,""
+	"worker_node_"+(.idx|tostring)+" ansible_ssh_user=ubuntu ansible_ssh_host="+.ip,""
 ' "$tfstate"
 
 jq --argjson idx 0 -r '.modules[].resources| to_entries | 
@@ -48,7 +48,7 @@ jq --argjson idx 0 -r '.modules[].resources| to_entries |
 		ip: (.[$i].value.primary.attributes.access_ip_v4),
 	} |
 	"# resource: "+.resource,
-	"master_node_"+(.idx|tostring)+" ansible_ssh_host="+.ip,""
+	"master_node_"+(.idx|tostring)+" ansible_ssh_user=ubuntu ansible_ssh_host="+.ip,""
 ' "$tfstate"
 
 printf "[kube-master]\n"
