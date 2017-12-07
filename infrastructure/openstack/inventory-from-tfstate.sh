@@ -36,7 +36,7 @@ jq --argjson idx 0 -r '.modules[].resources| to_entries |
 		ip: (.[$i].value.primary.attributes.access_ip_v4),
 	} |
 	"# resource: "+.resource,
-	"worker_node_"+(.idx|tostring)+" ansible_ssh_user=ubuntu ansible_ssh_host="+.ip,""
+	"worker"+(.idx|tostring)+" ansible_user=ubuntu ansible_host="+.ip,""
 ' "$tfstate"
 
 jq --argjson idx 0 -r '.modules[].resources| to_entries | 
@@ -48,27 +48,27 @@ jq --argjson idx 0 -r '.modules[].resources| to_entries |
 		ip: (.[$i].value.primary.attributes.access_ip_v4),
 	} |
 	"# resource: "+.resource,
-	"master_node_"+(.idx|tostring)+" ansible_ssh_user=ubuntu ansible_ssh_host="+.ip,""
+	"master"+(.idx|tostring)+" ansible_user=ubuntu ansible_host="+.ip+" ip="+.ip,""
 ' "$tfstate"
 
 printf "[kube-master]\n"
 idx=-1
 while [ $(( ++idx )) -lt $master_count ]; do
-	printf "master_node_$idx\n"
+	printf "master$idx\n"
 done
 
 
 printf "\n[etcd]\n"
 idx=-1
 while [ $(( ++idx )) -lt $master_count ]; do
-	printf "master_node_$idx\n"
+	printf "master$idx\n"
 done
 
 
 printf "\n[kube-node]\n"
 idx=-1
 while [ $(( ++idx )) -lt $worker_count ]; do
-	printf "worker_node_$idx\n"
+	printf "worker$idx\n"
 done
 
 cat <<EOF
