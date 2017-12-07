@@ -1,0 +1,24 @@
+[all]
+master 	 ansible_host=10.1.2.10 ansible_user=ubuntu
+node1 	 ansible_host=10.1.2.11 ansible_user=ubuntu
+node2 	 ansible_host=10.1.2.12 ansible_user=ubuntu
+
+[kube-master]
+master
+
+[kube-node]
+node1 	 
+node2
+
+[etcd]
+master
+
+[k8s-cluster:children]
+kube-node 	 
+kube-master 	 
+
+[calico-rr]
+
+[vault]
+node1 	 
+
