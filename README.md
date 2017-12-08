@@ -15,8 +15,8 @@ created infrastructure. The infrastructure provisioning is based on
 
 At present, the following providers are supported:
 
-* DigitalOcean
 * OpenStack
+* WiP Digital Ocean
 
 ### Requirements
 
