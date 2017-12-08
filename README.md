@@ -16,6 +16,7 @@ created infrastructure. The infrastructure provisioning is based on
 At present, the following providers are supported:
 
 * DigitalOcean
+* OpenStack
 
 ### Requirements
 
@@ -26,12 +27,18 @@ At present, the following providers are supported:
 
 Find the supported infrastructure providers in `infrastructure`.
 
-* `cd infrastructure/digitalocean`
+* `cd infrastructure/openstack`
 * Create a file `terraform.tfvars` based on the given example
-* Adjust the `cluster.tf` to your needs
 * Run `terraform init` to initialize terraform for your project
 * Run `terraform plan` to see the execution plan
 * Run `terraform apply` to execute the plan an provision the infrastructure
+
+Next step is to use kubespray+ansible to deploy k8s onto the infrastructure.
+(Example steps below are based on openstack example.)
+
+* Run `./run-kubespray.sh` (This will clone kubespray repository, create ansible-inventory from terraform-state and run the playbook for k8s deployment)
+* Run `./describe-inventory.sh terraform.tfstate` to see infrastructure details.
+* Copy `/etc/kubernetes/admin.conf` from a master node.
 
 
 ## Cluster Setup
