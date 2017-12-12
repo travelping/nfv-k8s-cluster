@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    run: test
+  name: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: test
+  template:
+    metadata:
+      labels:
+        run: test
+    spec:
+      containers:
+      - command: ["/bin/sh"]
+        args: ["-c", "ip a add 198.18.0.2/24 dev net0; ip r change default via 198.18.0.1; sleep 100000000000"]
+        image: alpine
+        imagePullPolicy: Always
+        name: test
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN

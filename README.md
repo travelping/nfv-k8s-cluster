@@ -23,7 +23,6 @@ At present, the following providers are supported:
 * `terraform` binary (see [Install manual](https://www.terraform.io/intro/getting-started/install.html))
 * API keys for the respective cloud provider
 
-### Quick-start
 
 Find the supported infrastructure providers in `infrastructure`.
 
@@ -33,6 +32,15 @@ Find the supported infrastructure providers in `infrastructure`.
 * Run `terraform plan` to see the execution plan
 * Run `terraform apply` to execute the plan an provision the infrastructure
 
+
+## Cluster Setup
+
+A Kubernetes cluster is created on a given infrastructure. Besides the
+fundamental Kubernetes components, additional resources are created to run
+VNFs. The cluster boot-strapping utilizes [kubespray](https://kubespray.io/).
+
+### Quick-start
+
 Next step is to use kubespray+ansible to deploy k8s onto the infrastructure.
 (Example steps below are based on openstack example.)
 
@@ -40,9 +48,11 @@ Next step is to use kubespray+ansible to deploy k8s onto the infrastructure.
 * Run `./describe-inventory.sh terraform.tfstate` to see infrastructure details.
 * Copy `/etc/kubernetes/admin.conf` from a master node.
 
-
-## Cluster Setup
-
-A Kubernetes cluster is created on a given infrastructure. Besides the
-fundamental Kubernetes components, additional resources are created to run
-VNFs. The cluster boot-strapping utilizes [kubespray](https://kubespray.io/).
+To connect pods to multiple interfaces using [multus
+CNI](https://github.com/Intel-Corp/multus-cni), adapt the CNI configuration
+`05-multus.conf` to your needs and deploy it on the respective hosts into
+`/etc/cni/net.d/`. Pods started on the hosts using multus CNI will have the
+main interface `eth0` for intra-cluster communication and additional
+interfaces `net0`, `net1`, ... for the additionally configured networks in the
+CNI config. See `test.yaml.sample` for an example deployment using multiple
+interfaces.
