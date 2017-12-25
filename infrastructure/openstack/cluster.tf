@@ -149,5 +149,5 @@ resource "openstack_networking_subnet_v2" "cluster-network" {
   network_id = "${openstack_networking_network_v2.cluster-network.id}"
   cidr = "10.77.0.0/18"
   ip_version = 4
-	# FIXME/TODO - remove dhcp
+  no_gateway = "true"
 }
