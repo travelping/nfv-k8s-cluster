@@ -1,6 +1,13 @@
 variable "name_prefix" {}
 variable "instance_keypair" {}
 
+variable "availability_zones" {
+  default = {
+    "0" = "local_zone_01"
+    "1" = "local_zone_02"
+    "2" = "local_zone_03"
+  }
+}
 
 # master
 variable "mastercount" {
@@ -13,6 +20,7 @@ resource "openstack_compute_instance_v2" "master" {
   flavor_name     = "x1.small"
   key_pair        = "${var.instance_keypair}"
   security_groups = ["all_traffic"]
+  availability_zone = "${lookup(var.availability_zones, count.index % length(var.availability_zones))}"
 
   network {
     name = "shared"
@@ -77,6 +85,7 @@ resource "openstack_compute_instance_v2" "worker" {
   flavor_name     = "x1.small"
   key_pair        = "${var.instance_keypair}"
   security_groups = ["all_traffic"]
+  availability_zone = "${lookup(var.availability_zones, count.index % length(var.availability_zones))}"
 
   network {
     name = "shared"
