@@ -26,6 +26,10 @@ resource "openstack_compute_instance_v2" "master" {
     name = "uplink"
   }
 
+  network {
+    name = "${openstack_networking_network_v2.cluster-network.name}"
+  }
+
   connection {
       user = "ubuntu"
       type = "ssh"
@@ -43,9 +47,11 @@ resource "openstack_compute_instance_v2" "master" {
 			"sudo /tmp/iface-config.sh --udev shared0 ${self.network.0.mac}",
 			"sudo /tmp/iface-config.sh --udev bgp0 ${self.network.1.mac}",
 			"sudo /tmp/iface-config.sh --udev uplink0 ${self.network.2.mac}",
+			"sudo /tmp/iface-config.sh --udev cluster0 ${self.network.3.mac}",
 			"sudo /tmp/iface-config.sh --ipconfig shared0 dhcp",
 			"sudo /tmp/iface-config.sh --ipconfig bgp0 dhcp",
 			"sudo /tmp/iface-config.sh --ipconfig uplink0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig cluster0 dhcp",
 			"sudo reboot"
 		]
 	}
@@ -105,10 +111,11 @@ resource "openstack_compute_instance_v2" "worker" {
 			"sudo /tmp/iface-config.sh --udev shared0 ${self.network.0.mac}",
 			"sudo /tmp/iface-config.sh --udev bgp0 ${self.network.1.mac}",
 			"sudo /tmp/iface-config.sh --udev uplink0 ${self.network.2.mac}",
-			"sudo /tmp/iface-config.sh --udev data0 ${self.network.3.mac}",
+			"sudo /tmp/iface-config.sh --udev cluster0 ${self.network.3.mac}",
 			"sudo /tmp/iface-config.sh --ipconfig shared0 dhcp",
 			"sudo /tmp/iface-config.sh --ipconfig bgp0 dhcp",
 			"sudo /tmp/iface-config.sh --ipconfig uplink0 dhcp",
+			"sudo /tmp/iface-config.sh --ipconfig cluster0 dhcp",
 			"sudo reboot"
 		]
 	}
