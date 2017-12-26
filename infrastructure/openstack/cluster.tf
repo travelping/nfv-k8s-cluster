@@ -9,6 +9,13 @@ variable "availability_zones" {
   }
 }
 
+variable "networks" {
+  description = "Additional networks the master and worker instances should be attached to."
+  type = "list"
+  default = [ {name = "shared"}, {name = "tenant-bgp"}, {name = "uplink"} ]
+}
+
+
 # master
 variable "mastercount" {
   default = 1
@@ -22,17 +29,7 @@ resource "openstack_compute_instance_v2" "master" {
   security_groups = ["all_traffic"]
   availability_zone = "${lookup(var.availability_zones, count.index % length(var.availability_zones))}"
 
-  network {
-    name = "shared"
-  }
-
-  network {
-    name = "tenant-bgp"
-  }
-
-  network {
-    name = "uplink"
-  }
+  network = ["${var.networks}"]
 
   network {
     name = "${openstack_networking_network_v2.cluster-network.name}"
@@ -87,17 +84,7 @@ resource "openstack_compute_instance_v2" "worker" {
   security_groups = ["all_traffic"]
   availability_zone = "${lookup(var.availability_zones, count.index % length(var.availability_zones))}"
 
-  network {
-    name = "shared"
-  }
-
-  network {
-    name = "tenant-bgp"
-  }
-
-  network {
-    name = "uplink"
-  }
+  network = ["${var.networks}"]
 
   network {
     name = "${openstack_networking_network_v2.cluster-network.name}"
