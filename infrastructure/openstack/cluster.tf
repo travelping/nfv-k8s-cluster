@@ -144,10 +144,14 @@ resource "openstack_networking_network_v2" "cluster-network" {
   admin_state_up = "true"
 }
 
+variable "cluster_cidr" {
+  default = "10.77.0.0/18"
+}
+
 resource "openstack_networking_subnet_v2" "cluster-network" {
   name = "${var.name_prefix}-cluster-network"
   network_id = "${openstack_networking_network_v2.cluster-network.id}"
-  cidr = "10.77.0.0/18"
+  cidr = "${var.cluster_cidr}"
   ip_version = 4
   no_gateway = "true"
 }
