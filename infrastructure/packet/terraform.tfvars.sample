@@ -1,0 +1,16 @@
+// packet.net authentication and project settings
+auth_token = "secret_authenticationn_token"
+project_id = "project_id"
+
+// SSH settings for remote-exec access are expected to
+// be available via your environment (e.g. by using
+// ssh-agent and respective $SSH_AUTH_SOCK)
+
+// Name prefix for created entities
+name_prefix = "my-nfv"
+
+// Set number of master nodes (default: 1)
+//mastercount = "3"
+
+// Set number of worker nodes (default: 2)
+//workercount = "3"

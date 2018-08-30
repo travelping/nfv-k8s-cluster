@@ -17,6 +17,7 @@ At present, the following providers are supported:
 
 * OpenStack
 * WiP Digital Ocean
+* packet.net
 
 ### Requirements
 
